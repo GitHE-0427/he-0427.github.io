@@ -13,15 +13,15 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
         #info {
-            padding: 15px;
-            background: #FF6B6B;
+            background-color: #FF6B6B;
             color: white;
             text-align: center;
-            font-size: 18px;
+            padding: 10px;
+            font-size: 16px;
         }
         #container {
             width: 100%;
-            height: calc(100% - 60px); /* 减去信息栏高度 */
+            height: calc(100% - 50px); /* 减去信息条高度 */
         }
         .tip {
             font-size: 14px;
@@ -49,27 +49,21 @@
         }
 
         // 获取经纬度和时间
-        var lat = getQueryParam('lat');
-        var lng = getQueryParam('lng');
+        var lat = parseFloat(getQueryParam('lat'));
+        var lng = parseFloat(getQueryParam('lng'));
         var time = getQueryParam('time');
 
         // 如果没有经纬度，显示默认位置并提示
-        if (!lat || !lng) {
-            lat = 39.908;  // 默认北京天安门
+        if (isNaN(lat) || isNaN(lng)) {
+            lat = 39.908;
             lng = 116.397;
             document.getElementById('timeDisplay').innerText = '未获取到位置信息，显示默认地图';
         } else {
-            // 格式化时间（假设time是时间戳，如202603021700）
+            // 格式化时间
             if (time) {
-                // 简单格式化：假设time是YYYYMMDDHHmm格式，转换为可读字符串
-                if (time.length === 14) {
-                    var year = time.substr(0,4);
-                    var month = time.substr(4,2);
-                    var day = time.substr(6,2);
-                    var hour = time.substr(8,2);
-                    var minute = time.substr(10,2);
-                    var second = time.substr(12,2);
-                    document.getElementById('timeDisplay').innerText = '求助时间：' + year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+                var date = new Date(parseInt(time));
+                if (!isNaN(date.getTime())) {
+                    document.getElementById('timeDisplay').innerText = '求助时间：' + date.toLocaleString();
                 } else {
                     document.getElementById('timeDisplay').innerText = '求助时间：' + time;
                 }
@@ -84,19 +78,21 @@
             zoom: 15
         });
 
-        // 添加标记点（大头针）
+        // 添加标记点
         var marker = new TMap.Marker({
             position: new TMap.LatLng(lat, lng),
             map: map,
             title: "求助位置"
         });
 
-        // 可选：添加一个信息窗口
+        // 添加信息窗口
         var infoWindow = new TMap.InfoWindow({
             map: map,
             content: "这里是求助者位置",
             position: new TMap.LatLng(lat, lng)
         }).open();
     </script>
+</body>
+</html>
 </body>
 </html>
